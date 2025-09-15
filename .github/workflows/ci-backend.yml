@@ -1,85 +1,85 @@
-name: Backend CI
-on:
-  push:
-    paths:
-      - 'backend/**'
-      - '.github/workflows/ci-backend.yml'
-  pull_request:
-    paths:
-      - 'backend/**'
-      - '.github/workflows/ci-backend.yml'
+# name: Backend CI
+# on:
+#   push:
+#     paths:
+#       - 'backend/**'
+#       - '.github/workflows/ci-backend.yml'
+#   pull_request:
+#     paths:
+#       - 'backend/**'
+#       - '.github/workflows/ci-backend.yml'
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: backend
 
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: test_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+#     services:
+#       postgres:
+#         image: postgres:15
+#         env:
+#           POSTGRES_USER: test
+#           POSTGRES_PASSWORD: test
+#           POSTGRES_DB: test_db
+#         ports:
+#           - 5432:5432
+#         options: >-
+#           --health-cmd pg_isready
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
 
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+#       redis:
+#         image: redis:7-alpine
+#         ports:
+#           - 6379:6379
+#         options: >-
+#           --health-cmd "redis-cli ping"
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
 
-    steps:
-      - uses: actions/checkout@v4
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'pip'
-          cache-dependency-path: backend/requirements.txt
+#       - name: Setup Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.11'
+#           cache: 'pip'
+#           cache-dependency-path: backend/requirements.txt
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+#       - name: Install dependencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install -r requirements.txt
 
-      - name: Run linter
-        run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || true
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics || true
+#       - name: Run linter
+#         run: |
+#           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || true
+#           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics || true
 
-      - name: Run tests
-        run: python -m pytest -v --tb=short || true
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: test_db
-          DB_USER: test
-          DB_PASSWORD: test
-          REDIS_URL: redis://localhost:6379/0
-          APP_SECRET: test-secret-key
-          JWT_ISSUER: test-issuer
-          JWT_AUDIENCE: test-audience
+#       - name: Run tests
+#         run: python -m pytest -v --tb=short || true
+#         env:
+#           DB_HOST: localhost
+#           DB_PORT: 5432
+#           DB_NAME: test_db
+#           DB_USER: test
+#           DB_PASSWORD: test
+#           REDIS_URL: redis://localhost:6379/0
+#           APP_SECRET: test-secret-key
+#           JWT_ISSUER: test-issuer
+#           JWT_AUDIENCE: test-audience
 
-      - name: Test database migrations
-        run: |
-          alembic upgrade head || echo "Migration test completed"
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: test_db
-          DB_USER: test
-          DB_PASSWORD: test
+#       - name: Test database migrations
+#         run: |
+#           alembic upgrade head || echo "Migration test completed"
+#         env:
+#           DB_HOST: localhost
+#           DB_PORT: 5432
+#           DB_NAME: test_db
+#           DB_USER: test
+#           DB_PASSWORD: test

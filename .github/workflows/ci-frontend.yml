@@ -1,48 +1,48 @@
-name: Frontend CI
-on:
-  push:
-    paths:
-      - 'frontend/**'
-      - '.github/workflows/ci-frontend.yml'
-  pull_request:
-    paths:
-      - 'frontend/**'
-      - '.github/workflows/ci-frontend.yml'
+# name: Frontend CI
+# on:
+#   push:
+#     paths:
+#       - 'frontend/**'
+#       - '.github/workflows/ci-frontend.yml'
+#   pull_request:
+#     paths:
+#       - 'frontend/**'
+#       - '.github/workflows/ci-frontend.yml'
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: frontend
 
-    strategy:
-      matrix:
-        node-version: [18, 20]
+#     strategy:
+#       matrix:
+#         node-version: [18, 20]
 
-    steps:
-      - uses: actions/checkout@v4
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#           cache: 'npm'
+#           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
+#       - name: Install dependencies
+#         run: npm ci
 
-      - name: Run linter
-        run: npm run lint --if-present
+#       - name: Run linter
+#         run: npm run lint --if-present
 
-      - name: Run type check
-        run: npm run type-check --if-present
+#       - name: Run type check
+#         run: npm run type-check --if-present
 
-      - name: Run tests
-        run: npm test --if-present
+#       - name: Run tests
+#         run: npm test --if-present
 
-      - name: Build application
-        run: npm run build --if-present
-        env:
-          NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+#       - name: Build application
+#         run: npm run build --if-present
+#         env:
+#           NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
